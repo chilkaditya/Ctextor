@@ -15,7 +15,7 @@ struct TextLine {
 };
 
 // Function to render text on the screen
-void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLine>& lines, int startY) {
+void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLine>& lines, int cursorX,int cursorY) {
     SDL_Color textColor = {255, 255, 255, 255}; // White color
 
     for (size_t i = 0; i < lines.size(); ++i) {
@@ -27,7 +27,7 @@ void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLi
         int textHeight = textSurface->h;
 
         // Define the position where the text will be rendered
-        SDL_Rect renderQuad = { 10, startY + static_cast<int>(i * textHeight), textWidth, textHeight };
+        SDL_Rect renderQuad = { 10, 10 + static_cast<int>(i * textHeight), textWidth, textHeight };
 
         // Render the texture
         SDL_RenderCopy(renderer, textTexture, NULL, &renderQuad);
@@ -35,7 +35,25 @@ void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLi
         // Free resources
         SDL_FreeSurface(textSurface);
         SDL_DestroyTexture(textTexture);
+        
     }
+    int cursorHeight = TTF_FontHeight(font);
+    int cursorXPos = 10; // Starting position for text rendering
+
+    // Measure the width of the text up to cursorX
+    std::string textBeforeCursor = lines[cursorY].content.substr(0, cursorX);
+    TTF_SizeText(font, textBeforeCursor.c_str(), &cursorXPos, nullptr);
+    cursorXPos += 10; // Adjust for the left margin (starting position of text)
+    // if (!lines[cursorY].content.empty() && cursorX > 0) {
+    //     std::string textBeforeCursor = lines[cursorY].content.substr(0, cursorX);
+    //     TTF_SizeText(font, textBeforeCursor.c_str(), &cursorXPos, nullptr);
+    //     cursorXPos += 10; // Adjust for the left margin (starting position of text)
+    // }
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color for cursor
+    SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 10, 20};
+    SDL_RenderFillRect(renderer, &cursorRect);
+    
 }
 
 int main(int argc, char* argv[]) {
@@ -86,10 +104,14 @@ int main(int argc, char* argv[]) {
     std::vector<TextLine> lines;
     lines.push_back({" "});  // Start with an empty line
 
+    //Cursor position
+    int cursorX = 0;
+    int cursorY = 0;
+
     // Main loop
     bool quit = false;
     SDL_Event e;
-    std::string currentText = "";
+    std::string currentText = lines[cursorY].content;
 
     while (!quit) {
         // Handle events
@@ -99,29 +121,38 @@ int main(int argc, char* argv[]) {
                     quit = true;
                 }
                 case SDL_TEXTINPUT: {
-                    currentText += e.text.text;
-                    // std::cout << currentText << std::endl;
-                    lines.back().content = currentText;  // Update the current line
+                    currentText.insert(cursorX,e.text.text);
+                    cursorX++;
+                    lines[cursorY].content = currentText;
+                    // std::cout << cursorX << std::endl;
                 }
                 case SDL_KEYDOWN: {
                     // Handle Backspace
                     if (e.key.keysym.sym == SDLK_BACKSPACE) {
-                        if(!currentText.empty()){
-                            currentText.pop_back();
-                            std::cout << currentText << std::endl;
-                            lines.back().content = currentText;
+                        if (cursorX > 0) {
+                            currentText.erase(cursorX - 1, 1);  // Remove character before the cursor
+                            cursorX--;  // Move cursor back
+                            lines[cursorY].content = currentText;// Update current line
                         }
-                        else if(lines.size() > 1){
-                            lines.pop_back();
-                            currentText = lines.back().content;
+                        else if (cursorY > 0) {
+                            // If at the start of a line, move to the end of the previous line
+                            cursorY--;
+                            cursorX = lines[cursorY].content.length();  // Move cursor to the end of the previous line
+                            currentText = lines[cursorY].content;
                         }
-                        else currentText = " ";
                     }
                     // Handle Enter key
                     else if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER) {
-                        lines.push_back({" "});  // Add a new line
-                        currentText = "";        // Reset current text
+                        std::string newLineText = currentText.substr(cursorX);  // Text after the cursor becomes the new line
+                        currentText = currentText.substr(0, cursorX);  // Text before the cursor stays in the current line
+                        lines[cursorY].content = currentText;  // Update current line
+
+                        lines.insert(lines.begin() + cursorY + 1, {newLineText});  // Insert new line
+                        cursorY++;  // Move cursor to the new line
+                        cursorX = 0;  // Reset cursor position to the start of the new line
+                        currentText = lines[cursorY].content;  // Update current text to new line
                     }
+                    
                 }
             }
         }
@@ -132,7 +163,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         // Render the text
-        renderText(renderer, font, lines, 10);
+        renderText(renderer, font, lines, cursorX,cursorY);
 
         
 
