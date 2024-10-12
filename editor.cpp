@@ -14,6 +14,30 @@ struct TextLine {
     std::string content;
 };
 
+void scc(int code){
+    if(code < 0){
+        std::cerr << "SDL ERROR " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+}
+template<typename T>
+T *scp(T *ptr){
+    if(ptr == NULL){
+        std::cerr << "SDL ERROR " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+    return ptr;
+}
+template<typename T>
+T *tcp(T *ptr){
+    if(ptr == NULL){
+        std::cerr << "TTF ERROR " << TTF_GetError() << std::endl;
+        exit(1);
+    }
+    return ptr;
+}
+
+
 // Function to render text on the screen
 void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLine>& lines, int cursorX,int cursorY) {
     SDL_Color textColor = {255, 255, 255, 255}; // White color
@@ -53,47 +77,23 @@ void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLi
 
 int main(int argc, char* argv[]) {
     // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
-        return -1;
-    }
+    scc(SDL_Init(SDL_INIT_VIDEO));
 
     // Initialize SDL_ttf
-    if (TTF_Init() == -1) {
-        std::cerr << "SDL_ttf could not initialize! TTF_Error: " << TTF_GetError() << std::endl;
-        SDL_Quit();
-        return -1;
-    }
+    scc(TTF_Init());
 
     // Create a window
-    SDL_Window* window = SDL_CreateWindow("Ctextor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if (window == nullptr) {
-        std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-        TTF_Quit();
-        SDL_Quit();
-        return -1;
-    }
+    SDL_Window* window = scp(SDL_CreateWindow("Ctextor", 
+                                            SDL_WINDOWPOS_CENTERED, 
+                                            SDL_WINDOWPOS_CENTERED, 
+                                            SCREEN_WIDTH, SCREEN_HEIGHT, 
+                                            SDL_WINDOW_SHOWN));
 
     // Create a renderer
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (renderer == nullptr) {
-        std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-        SDL_DestroyWindow(window);
-        TTF_Quit();
-        SDL_Quit();
-        return -1;
-    }
+    SDL_Renderer* renderer = scp(SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED));
 
     // Load a font
-    TTF_Font* font = TTF_OpenFont("fonts/SixtyfourConvergence-Regular.ttf", 10);  // Replace with the path to your TTF font file
-    if (font == nullptr) {
-        std::cerr << "Failed to load font! TTF_Error: " << TTF_GetError() << std::endl;
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-        TTF_Quit();
-        SDL_Quit();
-        return -1;
-    }
+    TTF_Font* font = tcp(TTF_OpenFont("fonts/SixtyfourConvergence-Regular.ttf", 10));
 
     // Vector to store the text lines
     std::vector<TextLine> lines;
