@@ -43,12 +43,7 @@ void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLi
     // Measure the width of the text up to cursorX
     std::string textBeforeCursor = lines[cursorY].content.substr(0, cursorX);
     TTF_SizeText(font, textBeforeCursor.c_str(), &cursorXPos, nullptr);
-    cursorXPos += 10; // Adjust for the left margin (starting position of text)
-    // if (!lines[cursorY].content.empty() && cursorX > 0) {
-    //     std::string textBeforeCursor = lines[cursorY].content.substr(0, cursorX);
-    //     TTF_SizeText(font, textBeforeCursor.c_str(), &cursorXPos, nullptr);
-    //     cursorXPos += 10; // Adjust for the left margin (starting position of text)
-    // }
+    cursorXPos += 10;
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color for cursor
     SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 10, 20};
@@ -71,7 +66,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Create a window
-    SDL_Window* window = SDL_CreateWindow("SDL2 Text Editor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Ctextor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == nullptr) {
         std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         TTF_Quit();
@@ -134,23 +129,25 @@ int main(int argc, char* argv[]) {
                             cursorX--;  // Move cursor back
                             lines[cursorY].content = currentText;// Update current line
                         }
-                        else if (cursorY > 0) {
-                            // If at the start of a line, move to the end of the previous line
-                            cursorY--;
-                            cursorX = lines[cursorY].content.length();  // Move cursor to the end of the previous line
-                            currentText = lines[cursorY].content;
+                        else if (cursorY > 0 && cursorX == 0) {
+                            // Handle backspace at the start of a line: move to the previous line
+                            std::string previousLine = lines[cursorY - 1].content;
+
+                            // Remove the current line
+                            lines.erase(lines.begin() + cursorY);
+
+                            // Move cursor to the end of the previous line
+                            cursorY--;  // Move to the previous line
+                            cursorX = previousLine.length()-1;  // Set cursor at the end of the previous line
+                            currentText = lines[cursorY].content;  // Update the current line's content
                         }
                     }
                     // Handle Enter key
                     else if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER) {
-                        std::string newLineText = currentText.substr(cursorX);  // Text after the cursor becomes the new line
-                        currentText = currentText.substr(0, cursorX);  // Text before the cursor stays in the current line
-                        lines[cursorY].content = currentText;  // Update current line
-
-                        lines.insert(lines.begin() + cursorY + 1, {newLineText});  // Insert new line
-                        cursorY++;  // Move cursor to the new line
-                        cursorX = 0;  // Reset cursor position to the start of the new line
-                        currentText = lines[cursorY].content;  // Update current text to new line
+                        lines.push_back({" "}); // Insert new line
+                        cursorY++;  // move cursor to the new line
+                        cursorX = 0; //reset cursorX position
+                        currentText = lines[cursorY].content; // update current text to new line
                     }
                     
                 }
