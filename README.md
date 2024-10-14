@@ -58,3 +58,14 @@ git branch -u upstream/master                # Track the official master branch 
 # If you cloned the official repo:
 git remote set-url origin --push disabled    # Prevent accidental push to official repo (team members only)
 ```
+
+### Build & Run
+```bash
+cd Ctextor
+# if you using make for building then use below command
+make
+./prog1.exe
+# otherwise
+g++ editor.cpp -o prog1 -lmingw32 -lSDL2main -lSDL2 -lSDL2_tt 
+./prog1.exe
+```

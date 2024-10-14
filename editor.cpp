@@ -100,8 +100,8 @@ int main(int argc, char* argv[]) {
     lines.push_back({" "});  // Start with an empty line
 
     //Cursor position
-    int cursorX = 0;
-    int cursorY = 0;
+    unsigned int cursorX = 0;
+    unsigned int cursorY = 0;
 
     // Main loop
     bool quit = false;
@@ -172,7 +172,7 @@ int main(int argc, char* argv[]) {
                     else if (e.key.keysym.sym == SDLK_UP) {
                         if (cursorY > 0) {
                             cursorY--;  // Move to the previous line
-                            cursorX = std::min(cursorX, (int)lines[cursorY].content.length()-1);  // Clamp cursorX to the line length
+                            cursorX = std::min(cursorX, (unsigned int)lines[cursorY].content.length()-1);  // Clamp cursorX to the line length
                             currentText = lines[cursorY].content;
                         }
                         else if(cursorY == 0) continue;
@@ -180,7 +180,7 @@ int main(int argc, char* argv[]) {
                     else if (e.key.keysym.sym == SDLK_DOWN) {
                         if (cursorY < lines.size() - 1) {
                             cursorY++;  // Move to the next line
-                            cursorX = std::min(cursorX, (int)lines[cursorY].content.length()-1);  // Clamp cursorX to the line length
+                            cursorX = std::min(cursorX, (unsigned int)lines[cursorY].content.length()-1);  // Clamp cursorX to the line length
                             currentText = lines[cursorY].content;
                         }
                     }
