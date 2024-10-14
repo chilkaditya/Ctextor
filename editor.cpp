@@ -70,7 +70,7 @@ void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLi
     cursorXPos += 10;
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color for cursor
-    SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 10, 20};
+    SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 2, 15};
     SDL_RenderFillRect(renderer, &cursorRect);
     
 }
@@ -119,7 +119,6 @@ int main(int argc, char* argv[]) {
                     currentText.insert(cursorX,e.text.text);
                     cursorX++;
                     lines[cursorY].content = currentText;
-                    // std::cout << cursorX << std::endl;
                 }
                 case SDL_KEYDOWN: {
                     // Handle Backspace
@@ -148,6 +147,42 @@ int main(int argc, char* argv[]) {
                         cursorY++;  // move cursor to the new line
                         cursorX = 0; //reset cursorX position
                         currentText = lines[cursorY].content; // update current text to new line
+                    }
+                    // Handle Arrow Keys
+                    else if (e.key.keysym.sym == SDLK_LEFT) {
+                        if (cursorX > 0) {
+                            cursorX--;  // Move left in the current line
+
+                        } else if (cursorY > 0) {
+                            cursorY--;  // Move to the end of the previous line
+                            cursorX = lines[cursorY].content.length()-1;  // Move cursor to the end of the previous line
+                            currentText = lines[cursorY].content;
+                        }
+                    }
+                    else if (e.key.keysym.sym == SDLK_RIGHT) {
+                        if (cursorX < currentText.length()-1) {
+                            cursorX++;  // Move right in the current line
+                        } 
+                        else if (cursorY < lines.size() - 1) {
+                            cursorY++;  // Move to the start of the next line
+                            cursorX = 0;  // Move cursor to the start of the next line
+                            currentText = lines[cursorY].content;
+                        }
+                    }
+                    else if (e.key.keysym.sym == SDLK_UP) {
+                        if (cursorY > 0) {
+                            cursorY--;  // Move to the previous line
+                            cursorX = std::min(cursorX, (int)lines[cursorY].content.length()-1);  // Clamp cursorX to the line length
+                            currentText = lines[cursorY].content;
+                        }
+                        else if(cursorY == 0) continue;
+                    }
+                    else if (e.key.keysym.sym == SDLK_DOWN) {
+                        if (cursorY < lines.size() - 1) {
+                            cursorY++;  // Move to the next line
+                            cursorX = std::min(cursorX, (int)lines[cursorY].content.length()-1);  // Clamp cursorX to the line length
+                            currentText = lines[cursorY].content;
+                        }
                     }
                     
                 }

@@ -1,4 +1,4 @@
-# SDL2 Text Editor Application
+# SDL2 Text Editor Application : CTextor
 
 ## Introduction
 
