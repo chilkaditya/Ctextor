@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "check.h"
 
 // Screen dimensions
 const int SCREEN_WIDTH = 800;
@@ -13,30 +14,6 @@ const int SCREEN_HEIGHT = 600;
 struct TextLine {
     std::string content;
 };
-
-void scc(int code){
-    if(code < 0){
-        std::cerr << "SDL ERROR " << SDL_GetError() << std::endl;
-        exit(1);
-    }
-}
-template<typename T>
-T *scp(T *ptr){
-    if(ptr == NULL){
-        std::cerr << "SDL ERROR " << SDL_GetError() << std::endl;
-        exit(1);
-    }
-    return ptr;
-}
-template<typename T>
-T *tcp(T *ptr){
-    if(ptr == NULL){
-        std::cerr << "TTF ERROR " << TTF_GetError() << std::endl;
-        exit(1);
-    }
-    return ptr;
-}
-
 
 // Function to render text on the screen
 void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::vector<TextLine>& lines, int cursorX,int cursorY) {
