@@ -5,24 +5,40 @@
 #include "renderer.hpp"
 
 int main() {
-    std::cout << "reached" << std::endl;
     Renderer rend;
-    std::cout << "reached" << std::endl;
     rend.initialize();
-    std::cout << "reached" << std::endl;
     Editor editor;
     bool quit = false;
     SDL_Event e;
-    // while(1);
 
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
-            // std::cout << "reached" << std::endl;
+
             if (e.type == SDL_QUIT) quit = true;
+
+            //Handling text input event
             else if (e.type == SDL_TEXTINPUT) editor.handleTextInput(e.text.text);
+
             else if (e.type == SDL_KEYDOWN) {
+
+                //Handling backspace event
                 if (e.key.keysym.sym == SDLK_BACKSPACE) editor.handleBackspace();
+
+                //Handling enter event
                 else if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER) editor.handleEnter();
+
+                //Handling left-arrow key
+                else if (e.key.keysym.sym == SDLK_LEFT) editor.handleLeftArrowKey();
+
+                //Handling right-arrow key
+                else if (e.key.keysym.sym == SDLK_RIGHT) editor.handleRightArrowKey();
+
+                //Handling up-arrow key
+                else if (e.key.keysym.sym == SDLK_UP) editor.handleUpArrowKey();
+
+                //Handling down-arrow key
+                else if (e.key.keysym.sym == SDLK_DOWN) editor.handleDownArrowKey();
+
             }
         }
         // Clear the screen
@@ -30,17 +46,8 @@ int main() {
         SDL_RenderClear(rend.renderer);
 
         rend.renderText(rend.renderer,rend.font,editor.getLines(), editor.cursor.getX(), editor.cursor.getY());
-        // std::cout << "reached" << std::endl;
 
-        // Update the screen
-        SDL_RenderPresent(rend.renderer);
     }
-    // Clean up
-    TTF_CloseFont(rend.font);
-    SDL_DestroyRenderer(rend.renderer);
-    SDL_DestroyWindow(rend.window);
-    TTF_Quit();
-    SDL_Quit();
 
     return 0;
 }

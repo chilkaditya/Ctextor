@@ -12,6 +12,10 @@ public:
     void handleTextInput(const std::string& input);
     void handleBackspace();
     void handleEnter();
+    void handleLeftArrowKey();
+    void handleRightArrowKey();
+    void handleUpArrowKey();
+    void handleDownArrowKey();
     const std::vector<std::string>& getLines() const;
     std::string& getCurrText();
 

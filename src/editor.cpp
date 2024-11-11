@@ -29,16 +29,52 @@ void Editor::handleEnter(){
     cursor.setX(0);
     cursor.setY(cursor.getY()+1);
     currentText = lines[cursor.getY()];
-    // std::string newLine = lines[cursor.getY()].substr(cursor.getX());
-    // lines[cursor.getY()] = lines[cursor.getY()].substr(0, cursor.getX());
-    // lines.insert(lines.begin() + cursor.getY() + 1, newLine);
-    // cursor.setY(cursor.getY() + 1);
-    // cursor.setX(0);
+}
+
+void Editor::handleLeftArrowKey(){
+    if(cursor.getX() > 0){
+        cursor.setX(cursor.getX()-1);
+    }
+    else if(cursor.getY() > 0){
+        cursor.setY(cursor.getY()-1);
+        cursor.setX(lines[cursor.getY()].size()-1);
+        currentText = lines[cursor.getY()];
+    }
+}
+
+void Editor::handleRightArrowKey(){
+    if(cursor.getX() < (int)currentText.size()-1){
+        cursor.setX(cursor.getX()+1);
+    }
+    else if(cursor.getY() < (int)lines.size()-1){
+        cursor.setY(cursor.getY()+1);
+        cursor.setX(0);
+        currentText = lines[cursor.getY()];
+    }
+}
+
+void Editor::handleUpArrowKey(){
+    if(cursor.getY() > 0){
+        cursor.setY(cursor.getY()-1);
+        int mini = std::min(cursor.getX(),(int)lines[cursor.getY()].size()-1);
+        cursor.setX(mini);
+        currentText = lines[cursor.getY()];
+    }
+}
+
+void Editor::handleDownArrowKey(){
+    if(cursor.getY() < (int)lines.size()-1){
+        cursor.setY(cursor.getY()+1);
+        int mini = std::min(cursor.getX(),(int)lines[cursor.getY()].size()-1);
+        cursor.setX(mini);
+        currentText = lines[cursor.getY()];
+    }
 }
 
 const std::vector<std::string>& Editor::getLines() const {
     return lines;
 }
+
 std::string& Editor:: getCurrText(){
     return lines[cursor.getY()];
 }

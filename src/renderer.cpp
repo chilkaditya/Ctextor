@@ -23,12 +23,11 @@ void Renderer::initialize() {
                                 SDL_WINDOW_SHOWN));
 
     renderer = scp(SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED));
-
     font = tcp(TTF_OpenFont("fonts/SixtyfourConvergence-Regular.ttf", 10));
 }
 
 void Renderer::renderText(SDL_Renderer* renderer, TTF_Font* font,const std::vector<std::string>& lines, int cursorX, int cursorY) {
-    // clear();
+    clear();
     SDL_Color textColor = {255, 255, 255, 255}; // White color
 
     for (size_t i = 0; i < lines.size(); ++i) {
@@ -62,7 +61,7 @@ void Renderer::renderText(SDL_Renderer* renderer, TTF_Font* font,const std::vect
     SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 2, 15};
     SDL_RenderFillRect(renderer, &cursorRect);
 
-    // present();
+    present();
 }
 
 void Renderer::clear() {
