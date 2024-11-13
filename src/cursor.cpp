@@ -7,7 +7,7 @@ void Cursor::moveLeft() {
     if (x > 0) x--;
 }
 
-void Cursor::moveRight(int maxRight) {
+void Cursor::moveRight(unsigned int maxRight) {
     if (x < maxRight) x++;
 }
 
@@ -15,11 +15,11 @@ void Cursor::moveUp() {
     if (y > 0) y--;
 }
 
-void Cursor::moveDown(int maxDown) {
+void Cursor::moveDown(unsigned int maxDown) {
     if (y < maxDown) y++;
 }
 
-int Cursor::getX() const { return x; }
-int Cursor::getY() const { return y; }
-void Cursor::setX(int xPos) { x = xPos; }
-void Cursor::setY(int yPos) { y = yPos; }
+unsigned int Cursor::getX() const { return x; }
+unsigned int Cursor::getY() const { return y; }
+void Cursor::setX(unsigned int xPos) { x = xPos; }
+void Cursor::setY(unsigned int yPos) { y = yPos; }

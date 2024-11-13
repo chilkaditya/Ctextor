@@ -1,14 +1,14 @@
 # include "editor.hpp"
+# include <iostream>
 
 Editor::Editor(){
-    lines.push_back(" ");
+    lines.push_back("");
     currentText = lines[cursor.getY()];
+    // std::cout << cursor.getY() << currentText << std::endl;
 }
 
 void Editor::handleTextInput(const std::string& input){
-    std::string cText = getCurrText();
-    cText.insert(cursor.getX(),input);
-    lines[cursor.getY()] = cText;
+    lines[cursor.getY()].insert(cursor.getX(), input);
     cursor.setX(cursor.getX() + input.size());
 }
 
@@ -25,10 +25,12 @@ void Editor::handleBackspace(){
 }
 
 void Editor::handleEnter(){
-    lines.push_back(" ");
+    std::string newLine = lines[cursor.getY()].substr(cursor.getX());
+    lines[cursor.getY()] = lines[cursor.getY()].substr(0, cursor.getX());
+    lines.insert(lines.begin() + cursor.getY() + 1, newLine);
+    cursor.setY(cursor.getY() + 1);
     cursor.setX(0);
-    cursor.setY(cursor.getY()+1);
-    currentText = lines[cursor.getY()];
+
 }
 
 void Editor::handleLeftArrowKey(){
@@ -43,10 +45,10 @@ void Editor::handleLeftArrowKey(){
 }
 
 void Editor::handleRightArrowKey(){
-    if(cursor.getX() < (int)currentText.size()-1){
+    if(cursor.getX() < currentText.size()-1){
         cursor.setX(cursor.getX()+1);
     }
-    else if(cursor.getY() < (int)lines.size()-1){
+    else if(cursor.getY() < lines.size()-1){
         cursor.setY(cursor.getY()+1);
         cursor.setX(0);
         currentText = lines[cursor.getY()];
@@ -56,16 +58,16 @@ void Editor::handleRightArrowKey(){
 void Editor::handleUpArrowKey(){
     if(cursor.getY() > 0){
         cursor.setY(cursor.getY()-1);
-        int mini = std::min(cursor.getX(),(int)lines[cursor.getY()].size()-1);
+        int mini = std::min(cursor.getX(),lines[cursor.getY()].size()-1);
         cursor.setX(mini);
         currentText = lines[cursor.getY()];
     }
 }
 
 void Editor::handleDownArrowKey(){
-    if(cursor.getY() < (int)lines.size()-1){
+    if(cursor.getY() < lines.size()-1){
         cursor.setY(cursor.getY()+1);
-        int mini = std::min(cursor.getX(),(int)lines[cursor.getY()].size()-1);
+        int mini = std::min(cursor.getX(),lines[cursor.getY()].size()-1);
         cursor.setX(mini);
         currentText = lines[cursor.getY()];
     }

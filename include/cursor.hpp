@@ -6,17 +6,17 @@ class Cursor {
 public:
     Cursor();
     void moveLeft();
-    void moveRight(int maxRight);
+    void moveRight(unsigned int maxRight);
     void moveUp();
-    void moveDown(int maxDown);
-    int getX() const;
-    int getY() const;
-    void setX(int x);
-    void setY(int y);
+    void moveDown(unsigned int maxDown);
+    unsigned int getX() const;
+    unsigned int getY() const;
+    void setX(unsigned int x);
+    void setY(unsigned int y);
 
 private:
-    int x;
-    int y;
+    unsigned int x;
+    unsigned int y;
 };
 
 #endif // CURSOR_H

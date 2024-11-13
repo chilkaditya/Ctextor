@@ -26,28 +26,36 @@ void Renderer::initialize() {
     font = tcp(TTF_OpenFont("fonts/SixtyfourConvergence-Regular.ttf", 10));
 }
 
-void Renderer::renderText(SDL_Renderer* renderer, TTF_Font* font,const std::vector<std::string>& lines, int cursorX, int cursorY) {
+void Renderer::renderText(const std::vector<std::string>& lines, int cursorX, int cursorY) {
     clear();
-    SDL_Color textColor = {255, 255, 255, 255}; // White color
+    SDL_Color color = {255, 255, 255, 255}; // White color for text
 
     for (size_t i = 0; i < lines.size(); ++i) {
-        SDL_Surface* textSurface = TTF_RenderText_Solid(font, lines[i].c_str(), textColor);
-        SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        const std::string& line = lines[i];
+        // Check if line is empty, render a space to keep the line visible
+        const char* textToRender = line.empty() ? " " : line.c_str();
+        
+        SDL_Surface* textSurface = TTF_RenderText_Solid(font, textToRender, color);
+        if (textSurface == nullptr) {
+            // Handle error
+            SDL_Log("Failed to render text surface: %s", TTF_GetError());
+            continue;
+        }
 
-        // Get the width and height of the texture
+        SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        if (textTexture == nullptr) {
+            SDL_FreeSurface(textSurface);
+            SDL_Log("Failed to create texture from text surface: %s", SDL_GetError());
+            continue;
+        }
+
         int textWidth = textSurface->w;
         int textHeight = textSurface->h;
-
-        // Define the position where the text will be rendered
-        SDL_Rect renderQuad = { 10, 10 + static_cast<int>(i * textHeight), textWidth, textHeight };
-
-        // Render the texture
+        SDL_Rect renderQuad = {10, 10 + static_cast<int>(i * textHeight), textWidth, textHeight};
         SDL_RenderCopy(renderer, textTexture, NULL, &renderQuad);
 
-        // Free resources
         SDL_FreeSurface(textSurface);
         SDL_DestroyTexture(textTexture);
-        
     }
     int cursorHeight = TTF_FontHeight(font);
     int cursorXPos = 10; // Starting position for text rendering
@@ -57,12 +65,13 @@ void Renderer::renderText(SDL_Renderer* renderer, TTF_Font* font,const std::vect
     TTF_SizeText(font, textBeforeCursor.c_str(), &cursorXPos, nullptr);
     cursorXPos += 10;
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color for cursor
     SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 2, 15};
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &cursorRect);
 
     present();
 }
+
 
 void Renderer::clear() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

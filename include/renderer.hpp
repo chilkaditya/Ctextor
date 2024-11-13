@@ -12,7 +12,7 @@ public:
     Renderer();
     ~Renderer();
     void initialize();
-    void renderText(SDL_Renderer* renderer, TTF_Font* font,const std::vector<std::string>& lines, int cursorX, int cursorY);
+    void renderText(const std::vector<std::string>& lines, int cursorX, int cursorY);
     void clear();
     void present();
     SDL_Window* window;

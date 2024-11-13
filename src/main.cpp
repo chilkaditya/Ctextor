@@ -45,7 +45,7 @@ int main() {
         SDL_SetRenderDrawColor(rend.renderer, 0, 0, 0, 255);  // Black background
         SDL_RenderClear(rend.renderer);
 
-        rend.renderText(rend.renderer,rend.font,editor.getLines(), editor.cursor.getX(), editor.cursor.getY());
+        rend.renderText(editor.getLines(), editor.cursor.getX(), editor.cursor.getY());
 
     }
 
