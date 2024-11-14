@@ -15,9 +15,11 @@ public:
     void renderText(const std::vector<std::string>& lines, int cursorX, int cursorY);
     void clear();
     void present();
+    void toggleFullscreen();
     SDL_Window* window;
     SDL_Renderer* renderer;
     TTF_Font* font;
+    bool isFullScreen;
 };
 
 #endif // RENDERER_H

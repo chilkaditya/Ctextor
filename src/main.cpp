@@ -39,6 +39,9 @@ int main() {
                 //Handling down-arrow key
                 else if (e.key.keysym.sym == SDLK_DOWN) editor.handleDownArrowKey();
 
+                //Handling toogle-screen event
+                else if (e.key.keysym.sym == SDLK_F11) rend.toggleFullscreen();
+
             }
         }
         // Clear the screen

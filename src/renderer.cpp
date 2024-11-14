@@ -3,7 +3,7 @@
 #include "check.hpp"
 #include <iostream>
 
-Renderer::Renderer() : window(nullptr), renderer(nullptr), font(nullptr) {}
+Renderer::Renderer() : window(nullptr), renderer(nullptr), font(nullptr), isFullScreen(false) {}
 
 Renderer::~Renderer() {
     if (font) TTF_CloseFont(font);
@@ -23,7 +23,17 @@ void Renderer::initialize() {
                                 SDL_WINDOW_SHOWN));
 
     renderer = scp(SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED));
-    font = tcp(TTF_OpenFont("fonts/SixtyfourConvergence-Regular.ttf", 10));
+    font = tcp(TTF_OpenFont("fonts/SixtyfourConvergence-Regular.ttf", 20));
+}
+
+void Renderer::toggleFullscreen(){
+    isFullScreen = !isFullScreen;
+    if (isFullScreen) {
+        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    } 
+    else {
+        SDL_SetWindowFullscreen(window, 0);
+    }
 }
 
 void Renderer::renderText(const std::vector<std::string>& lines, int cursorX, int cursorY) {
@@ -65,7 +75,7 @@ void Renderer::renderText(const std::vector<std::string>& lines, int cursorX, in
     TTF_SizeText(font, textBeforeCursor.c_str(), &cursorXPos, nullptr);
     cursorXPos += 10;
 
-    SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 2, 15};
+    SDL_Rect cursorRect = {cursorXPos, 10 + cursorY * cursorHeight, 2, 25};
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &cursorRect);
 
