@@ -58,7 +58,7 @@ void Editor::handleRightArrowKey(){
 void Editor::handleUpArrowKey(){
     if(cursor.getY() > 0){
         cursor.setY(cursor.getY()-1);
-        int mini = std::min(cursor.getX(),lines[cursor.getY()].size()-1);
+        size_t mini = std::min<size_t>(cursor.getX(),lines[cursor.getY()].size()-1);
         cursor.setX(mini);
         currentText = lines[cursor.getY()];
     }
@@ -67,7 +67,7 @@ void Editor::handleUpArrowKey(){
 void Editor::handleDownArrowKey(){
     if(cursor.getY() < lines.size()-1){
         cursor.setY(cursor.getY()+1);
-        int mini = std::min(cursor.getX(),lines[cursor.getY()].size()-1);
+        size_t mini = std::min<size_t>(cursor.getX(),lines[cursor.getY()].size()-1);
         cursor.setX(mini);
         currentText = lines[cursor.getY()];
     }
